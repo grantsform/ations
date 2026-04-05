@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaults</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Mobile body adjustments */
+        @media screen and (max-width: 480px) {
+            body {
+                overflow: visible;
+            }
+        }
+
+        /* Prevent scrolling on mobile portrait */
+        @media screen and (max-width: 480px) and (orientation: portrait) {
+            html, body {
+                overflow: hidden;
+                height: 100vh;
+                width: 100vw;
+            }
+        }
+
+        .container {
+            position: relative;
+            width: 100vmin;
+            height: 100vmin;
+            padding-top: 16vmin; /* Space for tooltip at top */
+        }
+
+        .tooltip-display {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 200;
+            min-height: 12vmin;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tooltip-display .name {
+            font-size: 3.6vmin;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease, outline 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .tooltip-display .name:hover {
+            outline: 2px solid #888;
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        .tooltip-display .description {
+            font-size: 2.4vmin;
+            color: #ccc;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tooltip-display.show .name,
+        .tooltip-display.show .description {
+            opacity: 1;
+        }
+
+        .ring {
+            position: absolute;
+            top: calc(50% + 8vmin); /* Account for padding-top */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60vmin;
+            height: 60vmin;
+            border: 6px solid #444;
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(100, 100, 100, 0.3);
+        }
+
+        .orbit {
+            position: absolute;
+            top: calc(50% + 8vmin); /* Account for padding-top */
+            left: 50%;
+            width: 60vmin;
+            height: 60vmin;
+            transform: translate(-50%, -50%);
+            /* Removed animation - now handled by JavaScript */
+        }
+
+        .orbit.paused {
+            animation-play-state: paused;
+        }
+
+        /* Removed @keyframes rotate - now handled by JavaScript */
+
+        .vault-item {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .vault-item:hover {
+            transform: scale(1.2);
+        }
+
+        .vault-circle {
+            width: 8vmin;
+            height: 8vmin;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4.8vmin;
+            background: linear-gradient(135deg, #666, #333);
+            border: 4px solid #888;
+            box-shadow: 0 0 30px rgba(150, 150, 150, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .vault-item:hover .vault-circle {
+            background: linear-gradient(135deg, #888, #555);
+            box-shadow: 0 0 25px rgba(200, 200, 200, 0.7);
+        }
+
+        .vault-emoji {
+            /* Removed CSS animation - now handled by JavaScript */
+            font-family: 'Noto Color Emoji', sans-serif;
+            white-space: nowrap;
+        }
+
+        .vault-pointer {
+            font-family: 'Noto Color Emoji', sans-serif;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: translateY(-10%) rotate(0deg); }
+            50% { transform: translateY(-10%) rotate(5deg); }
+        }
+
+        .vault-finger {
+            animation: wiggle 0.5s infinite;
+        }
+
+        /* Bottom-left baby and finger animation */
+        .bottom-left-baby {
+            position: fixed;
+            bottom: 2vmin;
+            left: 2vmin;
+            z-index: 50;
+            font-size: 4vmin;
+            display: flex;
+            align-items: flex-end;
+            gap: -0.25vmin;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .bottom-left-baby .finger {
+            animation: wiggle 0.5s infinite;
+            margin-top: 0.5vmin;
+        }
+
+        .bottom-left-baby .baby {
+            font-size: 6vmin;
+            position: relative;
+        }
+
+        .bottom-left-baby .baby::after {
+            content: '🕶️';
+            position: absolute;
+            top: 25%;
+            left: 15%;
+            font-size: 0.7em;
+            z-index: 1;
+        }
+
+        /* Removed @keyframes counter-rotate - now handled by JavaScript */
+
+        /* Position each vault on the ring */
+        .vault-item:nth-child(1) {
+            top: 0%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(1) .vault-name {
+            top: -25px;
+        }
+
+        .vault-item:nth-child(2) {
+            top: 14.6%;
+            left: 85.4%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(2) .vault-name {
+            left: 50px;
+            top: 50%;
+            transform-origin: center;
+        }
+
+        .vault-item:nth-child(3) {
+            top: 50%;
+            left: 100%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(3) .vault-name {
+            left: 50px;
+        }
+
+        .vault-item:nth-child(4) {
+            top: 85.4%;
+            left: 85.4%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(4) .vault-name {
+            left: 50px;
+            top: 50%;
+        }
+
+        .vault-item:nth-child(5) {
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(5) .vault-name {
+            bottom: -25px;
+            top: auto;
+        }
+
+        .vault-item:nth-child(6) {
+            top: 85.4%;
+            left: 14.6%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(6) .vault-name {
+            right: 50px;
+            left: auto;
+        }
+
+        .vault-item:nth-child(7) {
+            top: 50%;
+            left: 0%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(7) .vault-name {
+            right: 50px;
+            left: auto;
+        }
+
+        .vault-item:nth-child(8) {
+            top: 14.6%;
+            left: 14.6%;
+            transform: translate(-50%, -50%);
+        }
+        .vault-item:nth-child(8) .vault-name {
+            right: 50px;
+            left: auto;
+        }
+
+        .center-glow {
+            position: absolute;
+            top: calc(50% + 8vmin);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20vmin;
+            height: 20vmin;
+            background: radial-gradient(circle, rgba(80, 80, 80, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .center-text {
+            position: absolute;
+            top: calc(50% + 8vmin);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .center-text a {
+            color: #888;
+            text-decoration: none;
+            font-size: 4vmin;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .center-text a:hover {
+            color: #fff;
+        }
+
+        .center-text .subtitle {
+            color: #555;
+            font-size: 2.8vmin;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+
+        .triangle-pointer {
+            position: absolute;
+            top: calc(50% + 8vmin - 30vmin - 10vmin);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 2vmin solid transparent;
+            border-right: 2vmin solid transparent;
+            border-top: 3vmin solid #fff;
+            z-index: 100;
+            transition: border-top-color 0.8s ease;
+        }
+
+        .triangle-pointer.faded {
+            border-top-color: #111;
+        }
+    </style>
+
+    <style>
+        /* Mobile scaling - test with fixed scale */
+        @media screen and (max-width: 480px) {
+            .container {
+                transform: scale(1.47);
+                transform-origin: center;
+            }
+
+            .bottom-left-baby {
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 6vmin;
+                bottom: 10vmin;
+            }
+
+            .bottom-left-baby .baby {
+                font-size: 8vmin;
+            }
+
+            .bottom-left-baby .finger {
+                font-size: 6vmin;
+            }
+        }
+    </style>
+
+    <style>
+        /* Vault list table styles */
+        .page-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Hamburger button */
+        .hamburger-btn {
+            position: fixed;
+            top: 2vmin;
+            right: 2vmin;
+            z-index: 1000;
+            background: rgba(50, 50, 50, 0.8);
+            border: none;
+            border-radius: 0.5vmin;
+            padding: 1.5vmin;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6vmin;
+            transition: background 0.3s ease;
+        }
+
+        .hamburger-btn:hover {
+            background: rgba(80, 80, 80, 0.9);
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 3vmin;
+            height: 0.4vmin;
+            background: #fff;
+            border-radius: 0.2vmin;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hamburger-btn.open span:nth-child(1) {
+            transform: rotate(45deg) translate(0.7vmin, 0.7vmin);
+        }
+
+        .hamburger-btn.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-btn.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(0.7vmin, -0.7vmin);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -40vmin;
+            width: 38vmin;
+            height: 100vh;
+            background: rgba(5, 5, 5, 0.94);
+            z-index: 900;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            padding-top: 8vmin;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .vault-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vmin;
+            padding: 2vmin;
+            max-width: 35vmin;
+        }
+
+        .vault-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5vmin;
+            text-decoration: none;
+            color: #888;
+            transition: color 0.3s ease;
+            padding: 1vmin;
+            border-radius: 0.5vmin;
+        }
+
+        .vault-list-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .vault-list-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .vault-list-order {
+            font-size: 2vmin;
+            color: #555;
+            min-width: 2.5vmin;
+            text-align: right;
+        }
+
+        .vault-list-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3vmin;
+        }
+
+        .vault-list-title {
+            font-size: 2.2vmin;
+            font-weight: 600;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a.vault-list-title:hover {
+            text-decoration: underline;
+        }
+
+        .vault-list-desc {
+            font-size: 1.6vmin;
+            color: #666;
+            /* ensure manual line breaks (<br>) and wrapping work */
+            white-space: pre-wrap;
+        }
+
+        /* Mobile portrait */
+        @media screen and (max-width: 480px) and (orientation: portrait) {
+            .sidebar {
+                width: 85vw;
+                right: -90vw;
+            }
+
+            .sidebar.open {
+                right: 0;
+            }
+
+            .vault-list {
+                max-width: 80vw;
+            }
+
+            .vault-list-item {
+                padding: 2vmin;
+                gap: 2vmin;
+            }
+
+            .vault-list-order {
+                font-size: 3.5vmin;
+            }
+
+            .vault-list-title {
+                font-size: 4vmin;
+            }
+
+            .vault-list-desc {
+                font-size: 3vmin;
+            }
+
+            .hamburger-btn {
+                padding: 2vmin;
+            }
+
+            .hamburger-btn span {
+                width: 4vmin;
+                height: 0.5vmin;
+            }
+        }
+
+        /* Pause/Play button */
+        .pause-play-btn {
+            display: flex;
+            align-items: center;
+            gap: 1vmin;
+            background: rgba(50, 50, 50, 0.8);
+            border: none;
+            border-radius: 0.5vmin;
+            padding: 1vmin 1.5vmin;
+            margin: 2vmin;
+            cursor: pointer;
+            color: #888;
+            font-size: 1.8vmin;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .pause-play-btn:hover {
+            background: rgba(80, 80, 80, 0.9);
+            color: #fff;
+        }
+
+        .pause-play-btn .icon {
+            width: 2vmin;
+            height: 2vmin;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pause-play-btn .pause-icon {
+            display: flex;
+            gap: 0.4vmin;
+        }
+
+        .pause-play-btn .pause-icon span {
+            width: 0.5vmin;
+            height: 1.6vmin;
+            background: currentColor;
+        }
+
+        .pause-play-btn .play-icon {
+            width: 0;
+            height: 0;
+            border-left: 1.2vmin solid currentColor;
+            border-top: 0.8vmin solid transparent;
+            border-bottom: 0.8vmin solid transparent;
+            display: none;
+        }
+
+        .pause-play-btn.paused .pause-icon {
+            display: none;
+        }
+
+        .pause-play-btn.paused .play-icon {
+            display: block;
+        }
+
+        @media screen and (max-width: 480px) and (orientation: portrait) {
+            .pause-play-btn {
+                font-size: 3.5vmin;
+                padding: 2vmin 3vmin;
+            }
+
+            .pause-play-btn .icon {
+                width: 4vmin;
+                height: 4vmin;
+            }
+
+            .pause-play-btn .pause-icon span {
+                width: 1vmin;
+                height: 3vmin;
+            }
+
+            .pause-play-btn .play-icon {
+                border-left: 2.4vmin solid currentColor;
+                border-top: 1.6vmin solid transparent;
+                border-bottom: 1.6vmin solid transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="hamburger-btn" id="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="sidebar" id="sidebar">
+        <button class="pause-play-btn" id="pause-play-btn">
+            <div class="icon">
+                <div class="pause-icon"><span></span><span></span></div>
+                <div class="play-icon"></div>
+            </div>
+            <span class="label">Pause</span>
+        </button>
+        <div class="vault-list" id="vault-list">
+            <!-- Vault list will be dynamically generated -->
+        </div>
+    </div>
+    <div class="page-wrapper">
+        <div class="container">
+            <div class="tooltip-display" id="tooltip-display">
+                <a class="name" id="tooltip-name" target="_blank"></a>
+                <div class="description" id="tooltip-description"></div>
+            </div>
+            <div class="center-glow"></div>
+            <div class="center-text">
+                <a href="https://github.com/grantsform" target="_blank">@grantsform</a>
+                <div class="subtitle">Obsidian Vaults</div>
+            </div>
+            <div class="triangle-pointer"></div>
+            <div class="ring"></div>
+            <div class="orbit" id="orbit">
+                <!-- Vault circles will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configure your vaults here
+        const vaults = [
+            { name: 'Island', emoji: '🌊', description: 'Random Thoughts And Idea Fragments.', link: '/vaults/island/' },
+            { name: 'Henge', emoji: '🪨', description: 'The Living-Document For The Lith Language.', link: '/vaults/henge/' },
+            { name: 'Prime', emoji: '🐉', description: 'Looking Back To The Past; To Move Forwards.', link: '/vaults/prime/' },
+            { name: 'Tscape', emoji: '🏗️', description: 'Mapping Out Metropolisp, A Liveable Lisp Env.', link: '/vaults/tscape/' },
+            { name: 'Machina', emoji: '<span style="color: orange; font-weight: 1000;">λ</span>', description: 'What A New Lisp-Machine Could Look Like.', link: '/vaults/machina/' },
+            { name: 'Mensch', emoji: '💫', description: 'A More Human Language;\nMade From Alien Technology.', link: '/vaults/mensch/' },
+            { name: 'Onthe', emoji: '🐑', description: 'On Lisp Exploration And Implementations.', link: '/vaults/onthe/' },
+            { name: 'Cortex', emoji: '🌪️', description: 'Whirlwind Of Misc Thought & Opinions.', link: '/vaults/cortex' }
+        ];
+
+        const orbit = document.getElementById('orbit');
+        const tooltipDisplay = document.getElementById('tooltip-display');
+        const tooltipName = document.getElementById('tooltip-name');
+        const tooltipDescription = document.getElementById('tooltip-description');
+        const trianglePointer = document.querySelector('.triangle-pointer');
+
+        // helper to render newlines as <br>
+        function formatDescription(desc) {
+            return desc.replace(/\n/g, '<br>');
+        }
+        const vaultList = document.getElementById('vault-list');
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const sidebar = document.getElementById('sidebar');
+        const pausePlayBtn = document.getElementById('pause-play-btn');
+        const pausePlayLabel = pausePlayBtn.querySelector('.label');
+        let hoverCount = 0; // Track number of active hovers
+        const circleRadius = 150;
+        let isHovering = false;
+        let animationStartTime = null;
+        const rotationDuration = 30000; // 30 seconds in ms
+        let currentActiveVault = -1; // Track which vault is currently active
+        let lastRotationAngle = 0; // Track previous rotation angle to detect crossings
+        let isPaused = false; // Track if rotation is paused
+        let pausedAtTime = 0; // Track when we paused
+
+        // Hamburger toggle
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('open');
+            sidebar.classList.toggle('open');
+        });
+
+        // Pause/Play toggle
+        pausePlayBtn.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pausePlayBtn.classList.toggle('paused', isPaused);
+            pausePlayLabel.textContent = isPaused ? 'Play' : 'Pause';
+            
+            if (isPaused) {
+                // Store the elapsed time when paused
+                pausedAtTime = performance.now() - animationStartTime;
+            } else {
+                // Resume by adjusting the start time
+                animationStartTime = performance.now() - pausedAtTime;
+            }
+        });
+
+        // Drag rotation variables
+        let isDragging = false;
+        let dragStartAngle = 0;
+        let orbitRotation = 0;
+        let lastMouseAngle = 0;
+
+        function getMouseAngle(event) {
+            const rect = orbit.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const mouseX = event.clientX || (event.touches && event.touches[0].clientX);
+            const mouseY = event.clientY || (event.touches && event.touches[0].clientY);
+            return Math.atan2(mouseY - centerY, mouseX - centerX);
+        }
+
+        function startDrag(event) {
+            // Don't start drag if clicking on a link or interactive element
+            const target = event.target;
+            if (target.closest('a') || target.closest('.tooltip-display') || target.closest('.vault-list') || target.closest('.sidebar') || target.closest('.hamburger-btn')) {
+                return;
+            }
+            
+            isDragging = true;
+            dragStartAngle = getMouseAngle(event);
+            lastMouseAngle = dragStartAngle;
+            // Don't stop animation, just track manual rotation
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            if (!isDragging) return;
+            
+            const currentAngle = getMouseAngle(event);
+            const angleDiff = currentAngle - lastMouseAngle;
+            orbitRotation += angleDiff;
+            
+            // Apply rotation immediately
+            orbit.style.transform = `translate(-50%, -50%) rotate(${orbitRotation}rad)`;
+            
+            // Counter-rotate emojis during drag
+            const emojiElements = document.querySelectorAll('.vault-emoji');
+            emojiElements.forEach(emoji => {
+                emoji.style.transform = `rotate(${-orbitRotation}rad)`;
+            });
+            
+            lastMouseAngle = currentAngle;
+            event.preventDefault();
+        }
+
+        function endDrag(event) {
+            if (!isDragging) return;
+            isDragging = false;
+            event.preventDefault();
+        }
+
+        function getActiveVaultIndex() {
+            // Use the same rotation calculation as updateOrbitRotation
+            let elapsed;
+            if (isPaused) {
+                elapsed = pausedAtTime;
+            } else {
+                elapsed = performance.now() - (animationStartTime || performance.now());
+            }
+            const autoRotation = -(elapsed / rotationDuration) * 2 * Math.PI;
+            const rotationAngle = autoRotation + orbitRotation;
+
+            const triangleAngle = 3 * Math.PI / 2;
+            // Very small threshold for "intersection" - emoji must be extremely close to triangle tip
+            const intersectionThreshold = Math.PI / 18; // 10 degrees in radians
+
+            // Find vault whose center is closest to triangle tip
+            let closestIndex = -1;
+            let smallestAngleDiff = Infinity;
+
+            for (let index = 0; index < vaults.length; index++) {
+                // Initial angle of this vault (center position)
+                const initialAngle = (index / vaults.length) * 2 * Math.PI - Math.PI / 2;
+
+                // Current angle after rotation
+                let currentAngle = initialAngle + rotationAngle;
+
+                // Normalize to 0 to 2PI
+                currentAngle = currentAngle % (2 * Math.PI);
+                if (currentAngle < 0) currentAngle += 2 * Math.PI;
+
+                // Calculate angular distance to triangle tip
+                let angleDiff = Math.abs(currentAngle - triangleAngle);
+                if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+
+                // If this vault is closer than previous closest, update
+                if (angleDiff < smallestAngleDiff) {
+                    smallestAngleDiff = angleDiff;
+                    closestIndex = index;
+                }
+            }
+
+            // Only change active vault if the closest vault is actually intersecting (very close)
+            if (smallestAngleDiff <= intersectionThreshold && closestIndex !== currentActiveVault) {
+                currentActiveVault = closestIndex;
+            }
+
+            lastRotationAngle = rotationAngle;
+            return currentActiveVault;
+        }
+
+        let lastDisplayedActiveVault = -1; // Track which vault was last displayed in the list
+
+        function updateActiveVault() {
+            if (!isHovering) {
+                const activeIndex = getActiveVaultIndex();
+                if (activeIndex >= 0) {
+                    const vault = vaults[activeIndex];
+                    tooltipName.textContent = vault.name;
+                    tooltipName.href = vault.link;
+                    tooltipDescription.innerHTML = formatDescription(vault.description);
+                    tooltipDisplay.classList.add('show');
+                    
+                    // Only reorder vault list if active vault changed
+                    if (activeIndex !== lastDisplayedActiveVault) {
+                        updateVaultListOrder(activeIndex);
+                        lastDisplayedActiveVault = activeIndex;
+                    }
+                } else {
+                    tooltipDisplay.classList.remove('show');
+                }
+            }
+            requestAnimationFrame(updateActiveVault);
+        }
+
+        function updateVaultListOrder(activeIndex) {
+            // Clear existing list
+            vaultList.innerHTML = '';
+            
+            // Generate reordered list: active first, then forward order from there
+            for (let i = 0; i < vaults.length; i++) {
+                let index;
+                if (i === 0) {
+                    index = activeIndex; // Active vault first
+                } else {
+                    // Forward order: go forwards from active
+                    index = (activeIndex + i) % vaults.length;
+                }
+                const vault = vaults[index];
+                
+                const listItem = document.createElement('div');
+                listItem.className = 'vault-list-item';
+                listItem.dataset.vaultIndex = index;
+                if (i === 0) listItem.classList.add('active');
+                
+                // First item (active) - title is a link
+                if (i === 0) {
+                    listItem.innerHTML = `
+                        <span class="vault-list-order">${i + 1}.</span>
+                        <div class="vault-list-content">
+                            <a href="${vault.link}" class="vault-list-title">${vault.name}</a>
+                            <span class="vault-list-desc">${formatDescription(vault.description)}</span>
+                        </div>
+                    `;
+                } else {
+                    listItem.innerHTML = `
+                        <span class="vault-list-order">${i + 1}.</span>
+                        <div class="vault-list-content">
+                            <span class="vault-list-title">${vault.name}</span>
+                            <span class="vault-list-desc">${formatDescription(vault.description)}</span>
+                        </div>
+                    `;
+                    // Add click handler to rotate to this vault
+                    listItem.style.cursor = 'pointer';
+                    listItem.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        rotateToVault(index);
+                    });
+                }
+                
+                vaultList.appendChild(listItem);
+            }
+        }
+
+        function rotateToVault(targetIndex) {
+            // Calculate current rotation - use paused time if paused
+            let elapsed;
+            if (isPaused) {
+                elapsed = pausedAtTime;
+            } else {
+                elapsed = performance.now() - (animationStartTime || performance.now());
+            }
+            const autoRotation = -(elapsed / rotationDuration) * 2 * Math.PI;
+            
+            // Calculate the angle needed to put this vault at the top (3PI/2)
+            const vaultInitialAngle = (targetIndex / vaults.length) * 2 * Math.PI - Math.PI / 2;
+            const targetAngle = 3 * Math.PI / 2; // Top position
+            
+            // Calculate required total rotation to position vault at top
+            const requiredRotation = targetAngle - vaultInitialAngle;
+            
+            // Adjust orbitRotation to compensate for autoRotation
+            orbitRotation = requiredRotation - autoRotation;
+            
+            // Normalize orbitRotation
+            while (orbitRotation < 0) orbitRotation += 2 * Math.PI;
+            orbitRotation = orbitRotation % (2 * Math.PI);
+            
+            // Force update active vault
+            currentActiveVault = targetIndex;
+            lastDisplayedActiveVault = targetIndex;
+            
+            // Update tooltip immediately
+            const vault = vaults[targetIndex];
+            tooltipName.textContent = vault.name;
+            tooltipName.href = vault.link;
+            tooltipDescription.innerHTML = formatDescription(vault.description);
+            tooltipDisplay.classList.add('show');
+            
+            // Update list order
+            updateVaultListOrder(targetIndex);
+        }
+
+        // Generate initial vault list
+        vaults.forEach((vault, index) => {
+            const listItem = document.createElement('div');
+            listItem.className = 'vault-list-item';
+            listItem.dataset.vaultIndex = index;
+            listItem.innerHTML = `
+                <span class="vault-list-order">${index + 1}.</span>
+                <div class="vault-list-content">
+                    <span class="vault-list-title">${vault.name}</span>
+                    <span class="vault-list-desc">${formatDescription(vault.description)}</span>
+                </div>
+            `;
+            
+            // Add click handler to rotate to this vault
+            listItem.style.cursor = 'pointer';
+            listItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                rotateToVault(index);
+            });
+            
+            vaultList.appendChild(listItem);
+        });
+
+        function updateOrbitRotation() {
+            let elapsed;
+            if (isPaused) {
+                elapsed = pausedAtTime;
+            } else {
+                elapsed = performance.now() - (animationStartTime || performance.now());
+            }
+            const autoRotation = -(elapsed / rotationDuration) * 2 * Math.PI;
+            const totalRotation = autoRotation + orbitRotation;
+            
+            // Rotate the orbit
+            orbit.style.transform = `translate(-50%, -50%) rotate(${totalRotation}rad)`;
+            
+            // Counter-rotate all emojis to keep them upright
+            const emojiElements = document.querySelectorAll('.vault-emoji');
+            emojiElements.forEach(emoji => {
+                emoji.style.transform = `rotate(${-totalRotation}rad)`;
+            });
+            
+            requestAnimationFrame(updateOrbitRotation);
+        }
+
+        // Start orbit rotation updates
+        animationStartTime = performance.now();
+        updateOrbitRotation();
+        
+        // Start active vault tracking
+        requestAnimationFrame(updateActiveVault);
+
+        // Create bottom-left baby and finger animation
+        const bottomLeftBaby = document.createElement('a');
+        bottomLeftBaby.className = 'bottom-left-baby';
+        bottomLeftBaby.href = 'https://grantsform.github.io';
+        bottomLeftBaby.target = '_blank';
+        bottomLeftBaby.innerHTML = `
+            <span class="finger">☝🏻</span>
+            <span class="baby">👶🏻</span>
+        `;
+        document.body.appendChild(bottomLeftBaby);
+
+        vaults.forEach((vault, index) => {
+            const angle = (index / vaults.length) * 2 * Math.PI - Math.PI / 2;
+            
+            // Circle position on orbit
+            const x = 50 + (circleRadius / 300) * 100 * Math.cos(angle);
+            const y = 50 + (circleRadius / 300) * 100 * Math.sin(angle);
+
+            const item = document.createElement('a');
+            item.href = vault.link;
+            item.className = 'vault-item';
+            item.style.left = `${x}%`;
+            item.style.top = `${y}%`;
+            item.style.transform = 'translate(-50%, -50%)';
+            item.dataset.vaultIndex = index;
+
+            const circle = document.createElement('div');
+            circle.className = 'vault-circle';
+
+            const emoji = document.createElement('span');
+            emoji.className = 'vault-emoji';
+            emoji.innerHTML = vault.emoji;
+            circle.appendChild(emoji);
+
+            item.appendChild(circle);
+
+            orbit.appendChild(item);
+
+            // Add hover events for tooltip
+            item.addEventListener('mouseenter', () => {
+                hoverCount++;
+                isHovering = true;
+                tooltipName.textContent = vault.name;
+                tooltipName.href = vault.link;
+                tooltipDescription.innerHTML = formatDescription(vault.description);
+                tooltipDisplay.classList.add('show');
+                trianglePointer.classList.add('faded');
+                orbit.classList.add('paused');
+            });
+
+            item.addEventListener('mouseleave', () => {
+                hoverCount--;
+                if (hoverCount <= 0) {
+                    hoverCount = 0;
+                    isHovering = false;
+                    trianglePointer.classList.remove('faded');
+                    orbit.classList.remove('paused');
+                }
+            });
+        });
+
+        // Add drag rotation event listeners
+        document.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', endDrag);
+        
+        // Touch events for mobile
+        document.addEventListener('touchstart', startDrag, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', endDrag);
+
+        // Prevent drag from interfering with sidebar clicks
+        sidebar.addEventListener('mousedown', (e) => e.stopPropagation());
+        sidebar.addEventListener('touchstart', (e) => e.stopPropagation());
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+	"nodes":[
+		{"id":"e2953824d5223a56","type":"file","file":"res/noto-emoji_rock.webp","x":-246,"y":-46,"width":93,"height":93},
+		{"id":"b555a73e7c2e53f7","type":"text","text":"# HENGE","x":-153,"y":-46,"width":400,"height":95},
+		{"id":"36de9255f3022dd5","type":"text","text":"## On, [The Sword](https://xkcd.com/297/) & [The Stone](https://github.com/lith-lang)\nThe Defacto Knowledgebase On/Of Lith-Lang;\nA Spiritual Successor To `LISP`.\n\n","x":-246,"y":80,"width":493,"height":140},
+		{"id":"8c88ef9f5bcd3743","type":"text","text":"This vault, is a living-document for and in aid to the development the [Lith](https://github.com/lith-lang) Programming-Language; And it's reference implementation [Mega(lith)](https://github.com/metropolisp/megalith). \n\nLith is a new Lisp without all the compatibility considerations / consolidation kludge of Common-Lisp but is very-much culturally adjacent to it. It intends to serve as an \"alternate history\" where the AI Winter never happened (Even as the threat of the second looms heavy. lol) -- and what a Lisp that kept pushing could've, would've and I think should've looked like.\n\nThis is a project that heavily leans into idealism over pragmatism, the goal is to try to push things forwards not make things a bit better; If you want a more traditional and certainly more 'real' (ie: not currently vaporware) \"better Lisp\", we have a sister project called [Clark](https://github.com/metropolisp/clark-lang) -- which is built on CL but which should be viewed as a Meta-Lisp implementation adjacent to Gerbil on Gambit or Racket on Chez, in the world of Scheme.  Clark has a nicer syntax (imo), some opinionated defaults, bigger stdlib, etc. We don't really care about being a good-citizen in the CL space for / in Clark but our own thing; Though another interesting option and one certainly more true to actual CL as-is, is [CIEL](https://github.com/ciel-lang/ciel) and if you're just interested in a better CL \n\nBut yeah, Lith's wishlist is broadly: \n(and obviously this is vaporware atm, \n  but some unique desires for it are a,)\n\n- Deterministic memory-model \n    (easily mapable to different machines with minimum memory threshold met  and architectures)\n    \n- Built-in source management.\n  \n- Permissions system / scoping for multi-user dev.  \n  \n -  In-instance snapshot and rollbacks of the image.\n\n-  Full graphical system, including novel visual-programming presentation\n- Distributed computing friendly. Share resources selectively for given tasks.","x":300,"y":-46,"width":620,"height":826},
+		{"id":"63d35c460e46d2e6","type":"text","text":">  `Any Sufficiently Advanced LISP Is Indistinguishable From Magic`","x":-246,"y":220,"width":493,"height":80},
+		{"id":"f52ac34b818183f6","type":"text","text":"# Adjacent Vaults.","x":980,"y":-46,"width":440,"height":60},
+		{"id":"318a35bdab46f865","type":"text","text":"","x":980,"y":17,"width":250,"height":63},
+		{"id":"35d3c050283889f7","type":"text","text":"# Relevant Pages.","x":980,"y":300,"width":440,"height":60},
+		{"id":"40e5efe092d2cd4a","type":"text","text":"","x":980,"y":360,"width":250,"height":60},
+		{"id":"64fc2e004916c7ba","type":"text","text":"","x":980,"y":440,"width":440,"height":60},
+		{"id":"ff5773eff4e7a35b","type":"text","text":"","x":980,"y":500,"width":440,"height":60},
+		{"id":"6167de9bfe275a56","type":"text","text":"","x":980,"y":560,"width":440,"height":60},
+		{"id":"900dc899ed0fae8b","type":"text","text":"","x":980,"y":620,"width":440,"height":60},
+		{"id":"f7fd4d555f43a299","type":"text","text":"","x":980,"y":80,"width":140,"height":135},
+		{"id":"593eeaadee988470","type":"text","text":"","x":1120,"y":80,"width":140,"height":135},
+		{"id":"747159ac19a2933d","type":"text","text":"","x":1260,"y":80,"width":140,"height":135}
+	],
+	"edges":[]
+}

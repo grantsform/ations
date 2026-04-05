@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"e2953824d5223a56","type":"file","file":"res/noto-emoji_dizzy.webp","x":-246,"y":-46,"width":93,"height":93},
+		{"id":"b555a73e7c2e53f7","type":"text","text":"# MENSCH","x":-153,"y":-46,"width":400,"height":93},
+		{"id":"756da29681ad6a61","type":"text","text":"> Towards A More Human Language; \n> Made With Alien Technology.\n> ","x":-153,"y":80,"width":400,"height":100},
+		{"id":"08b61a631808b36a","x":340,"y":-46,"width":420,"height":226,"type":"text","text":"It's a staaaaaaaar man"}
+	],
+	"edges":[]
+}

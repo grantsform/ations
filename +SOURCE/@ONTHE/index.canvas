@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"4febb0891e8d73b6","type":"file","file":"res/noto-emoji_ewe.webp","x":-246,"y":-46,"width":93,"height":93},
+		{"id":"96e56bf7a6aa8f49","type":"text","text":"# ONTHE\nLAMB(DA)","x":-153,"y":-46,"width":400,"height":93},
+		{"id":"e526fb66d1978e14","type":"text","text":">  The Study Of The Lambda\n>  And The Lisps More Generally.","x":-153,"y":80,"width":400,"height":80},
+		{"id":"37bab3871ba194e5","type":"text","text":"","x":280,"y":-46,"width":640,"height":300}
+	],
+	"edges":[]
+}

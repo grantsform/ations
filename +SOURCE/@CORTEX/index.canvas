@@ -1,0 +1,8 @@
+{
+	"nodes":[
+		{"id":"59fb86b00ddfe4c1","type":"file","file":"res/noto-emoji_tornado.webp","x":-246,"y":-46,"width":93,"height":93},
+		{"id":"3b78748ed32c3c85","type":"text","text":"# CORTEX","x":-153,"y":-46,"width":400,"height":93},
+		{"id":"9dc8386e16a5eeb0","type":"text","text":"> Whirlwind Of Misc Thought & Opinions.","x":-153,"y":80,"width":400,"height":100}
+	],
+	"edges":[]
+}

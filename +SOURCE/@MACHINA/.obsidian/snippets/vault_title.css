@@ -1,0 +1,27 @@
+.workspace-ribbon.mod-left + .mod-left-split .workspace-tabs.mod-top-left-space .workspace-tab-header-spacer {
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::after {
+        content: "MACHINA";
+        padding: 0.2em 0.5em;
+        font-weight: bold;
+        color: white;
+        background-color: black;
+        border-radius: 10px;
+        margin-right: 1.5em;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+    }
+}

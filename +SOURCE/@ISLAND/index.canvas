@@ -1,0 +1,8 @@
+{
+	"nodes":[
+		{"id":"b555a73e7c2e53f7","type":"text","text":"# ISLAND","x":-153,"y":-46,"width":400,"height":93},
+		{"id":"e2953824d5223a56","type":"file","file":"res/noto-emoji_water-wave.webp","x":-246,"y":-46,"width":93,"height":93},
+		{"id":"e8fd7eda49063f05","type":"text","text":"> Misc Stuff, That Belongs No-Where Else.\n> Or Doesn't Have Anywhere Yet To Go.","x":-153,"y":80,"width":400,"height":80}
+	],
+	"edges":[]
+}

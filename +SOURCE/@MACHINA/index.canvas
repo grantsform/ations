@@ -1,0 +1,8 @@
+{
+	"nodes":[
+		{"id":"e2953824d5223a56","type":"file","file":"res/the-lambda.webp","x":-246,"y":-46,"width":93,"height":93},
+		{"id":"b555a73e7c2e53f7","type":"text","text":"# MACHINA","x":-153,"y":-46,"width":400,"height":93},
+		{"id":"0b0ba79fd75fe2d5","type":"text","text":"> On What A Modern Lisp-Machine OS / Environment Could Look Like.","x":-153,"y":80,"width":400,"height":80}
+	],
+	"edges":[]
+}

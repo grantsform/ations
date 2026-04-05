@@ -1,0 +1,8 @@
+{
+	"nodes":[
+		{"id":"ed90875f35eb12e8","type":"file","file":"res/noto-emoji_dragon.webp","x":-246,"y":-46,"width":93,"height":93},
+		{"id":"a3a3907179c90f7c","type":"text","text":"# PRIME\nPRIM**E'VAL**","x":-153,"y":-46,"width":413,"height":93},
+		{"id":"a4e68438c37fe6d7","type":"text","text":"> Looking Back To The Past, To Move Forward.\n> An Investigation Of Promising Old Stuff That Never Really Made It To \"Modern Times\".","x":-153,"y":80,"width":413,"height":120}
+	],
+	"edges":[]
+}
