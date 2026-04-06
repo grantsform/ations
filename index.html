@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vaults</title>
+    <title>Ations</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
@@ -653,6 +653,7 @@
             <div class="center-text">
                 <a href="https://github.com/grantsform" target="_blank">@grantsform</a>
                 <div class="subtitle">Obsidian Vaults</div>
+                <div class="subtitle">/ Ruminations.</div>
             </div>
             <div class="triangle-pointer"></div>
             <div class="ring"></div>
@@ -663,16 +664,16 @@
     </div>
 
     <script>
-        // Configure your vaults here
-        const vaults = [
-            { name: 'Island', emoji: '🌊', description: 'Random Thoughts And Idea Fragments.', link: '/vaults/island/' },
-            { name: 'Henge', emoji: '🪨', description: 'The Living-Document For The Lith Language.', link: '/vaults/henge/' },
-            { name: 'Prime', emoji: '🐉', description: 'Looking Back To The Past; To Move Forwards.', link: '/vaults/prime/' },
-            { name: 'Tscape', emoji: '🏗️', description: 'Mapping Out Metropolisp, A Liveable Lisp Env.', link: '/vaults/tscape/' },
-            { name: 'Machina', emoji: '<span style="color: orange; font-weight: 1000;">λ</span>', description: 'What A New Lisp-Machine Could Look Like.', link: '/vaults/machina/' },
-            { name: 'Mensch', emoji: '💫', description: 'A More Human Language;\nMade From Alien Technology.', link: '/vaults/mensch/' },
-            { name: 'Onthe', emoji: '🐑', description: 'On Lisp Exploration And Implementations.', link: '/vaults/onthe/' },
-            { name: 'Cortex', emoji: '🌪️', description: 'Whirlwind Of Misc Thought & Opinions.', link: '/vaults/cortex' }
+        // Configure your ations here
+        const ations = [
+            { name: 'Island', emoji: '🌊', description: 'Random Thoughts And Idea Fragments.', link: '/ations/island/' },
+            { name: 'Henge', emoji: '🪨', description: 'The Living-Document For The Lith Language.', link: '/ations/henge/' },
+            { name: 'Prime', emoji: '🐉', description: 'Looking Back To The Past; To Move Forwards.', link: '/ations/prime/' },
+            { name: 'Tscape', emoji: '🏗️', description: 'Mapping Out Metropolisp, A Liveable Lisp Env.', link: '/ations/tscape/' },
+            { name: 'Machina', emoji: '<span style="color: orange; font-weight: 1000;">λ</span>', description: 'What A New Lisp-Machine Could Look Like.', link: '/ations/machina/' },
+            { name: 'Mensch', emoji: '💫', description: 'A More Human Language;\nMade From Alien Technology.', link: '/ations/mensch/' },
+            { name: 'Onthe', emoji: '🐑', description: 'On Lisp Exploration And Implementations.', link: '/ations/onthe/' },
+            { name: 'Cortex', emoji: '🌪️', description: 'Whirlwind Of Misc Thought & Opinions.', link: '/ations/cortex' }
         ];
 
         const orbit = document.getElementById('orbit');
@@ -795,9 +796,9 @@
             let closestIndex = -1;
             let smallestAngleDiff = Infinity;
 
-            for (let index = 0; index < vaults.length; index++) {
+            for (let index = 0; index < ations.length; index++) {
                 // Initial angle of this vault (center position)
-                const initialAngle = (index / vaults.length) * 2 * Math.PI - Math.PI / 2;
+                const initialAngle = (index / ations.length) * 2 * Math.PI - Math.PI / 2;
 
                 // Current angle after rotation
                 let currentAngle = initialAngle + rotationAngle;
@@ -832,7 +833,7 @@
             if (!isHovering) {
                 const activeIndex = getActiveVaultIndex();
                 if (activeIndex >= 0) {
-                    const vault = vaults[activeIndex];
+                    const vault = ations[activeIndex];
                     tooltipName.textContent = vault.name;
                     tooltipName.href = vault.link;
                     tooltipDescription.innerHTML = formatDescription(vault.description);
@@ -855,15 +856,15 @@
             vaultList.innerHTML = '';
             
             // Generate reordered list: active first, then forward order from there
-            for (let i = 0; i < vaults.length; i++) {
+            for (let i = 0; i < ations.length; i++) {
                 let index;
                 if (i === 0) {
                     index = activeIndex; // Active vault first
                 } else {
                     // Forward order: go forwards from active
-                    index = (activeIndex + i) % vaults.length;
+                    index = (activeIndex + i) % ations.length;
                 }
-                const vault = vaults[index];
+                const vault = ations[index];
                 
                 const listItem = document.createElement('div');
                 listItem.className = 'vault-list-item';
@@ -911,7 +912,7 @@
             const autoRotation = -(elapsed / rotationDuration) * 2 * Math.PI;
             
             // Calculate the angle needed to put this vault at the top (3PI/2)
-            const vaultInitialAngle = (targetIndex / vaults.length) * 2 * Math.PI - Math.PI / 2;
+            const vaultInitialAngle = (targetIndex / ations.length) * 2 * Math.PI - Math.PI / 2;
             const targetAngle = 3 * Math.PI / 2; // Top position
             
             // Calculate required total rotation to position vault at top
@@ -929,7 +930,7 @@
             lastDisplayedActiveVault = targetIndex;
             
             // Update tooltip immediately
-            const vault = vaults[targetIndex];
+            const vault = ations[targetIndex];
             tooltipName.textContent = vault.name;
             tooltipName.href = vault.link;
             tooltipDescription.innerHTML = formatDescription(vault.description);
@@ -940,7 +941,7 @@
         }
 
         // Generate initial vault list
-        vaults.forEach((vault, index) => {
+        ations.forEach((vault, index) => {
             const listItem = document.createElement('div');
             listItem.className = 'vault-list-item';
             listItem.dataset.vaultIndex = index;
@@ -1003,8 +1004,8 @@
         `;
         document.body.appendChild(bottomLeftBaby);
 
-        vaults.forEach((vault, index) => {
-            const angle = (index / vaults.length) * 2 * Math.PI - Math.PI / 2;
+        ations.forEach((vault, index) => {
+            const angle = (index / ations.length) * 2 * Math.PI - Math.PI / 2;
             
             // Circle position on orbit
             const x = 50 + (circleRadius / 300) * 100 * Math.cos(angle);
